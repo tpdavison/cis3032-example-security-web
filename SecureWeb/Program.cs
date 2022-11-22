@@ -1,4 +1,5 @@
-﻿using SecureWeb.Services.Values;
+﻿using Auth0.AspNetCore.Authentication;
+using SecureWeb.Services.Values;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +12,11 @@ else
     builder.Services.AddHttpClient<ValuesService>();
     builder.Services.AddTransient<IValuesService, ValuesService>();
 }
+
+builder.Services.AddAuth0WebAppAuthentication(options => {
+    options.Domain = builder.Configuration["Auth:Domain"];
+    options.ClientId = builder.Configuration["Auth:ClientId"];
+});
 
 builder.Services.AddControllersWithViews();
 
@@ -27,6 +33,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
